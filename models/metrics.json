@@ -1,0 +1,9 @@
+{
+  "elegido": "random_forest",
+  "f1_macro": {
+    "baseline_mayoritaria": 0.2455,
+    "logreg": 0.9069,
+    "random_forest": 0.9076
+  },
+  "split": "fleet_id"
+}

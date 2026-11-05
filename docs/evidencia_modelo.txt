@@ -1,0 +1,63 @@
+Archivos/flotas: 5 | grupos para el split: fleet_id
+
+Distribución de clases:
+status
+CRITICAL    10258
+NORMAL       2612
+WARNING      2130
+Name: count, dtype: int64
+status
+CRITICAL    0.684
+NORMAL      0.174
+WARNING     0.142
+Name: proportion, dtype: float64
+
+Train: 9000 filas | Test: 6000 filas (grupos no vistos)
+
+=== baseline_mayoritaria | F1 macro = 0.2455
+[[   0    0 1334]
+ [   0    0 1169]
+ [   0    0 3497]]
+              precision    recall  f1-score   support
+
+      NORMAL       0.00      0.00      0.00      1334
+     WARNING       0.00      0.00      0.00      1169
+    CRITICAL       0.58      1.00      0.74      3497
+
+    accuracy                           0.58      6000
+   macro avg       0.19      0.33      0.25      6000
+weighted avg       0.34      0.58      0.43      6000
+
+
+=== logreg | F1 macro = 0.9069
+[[1177  157    0]
+ [  97 1041   31]
+ [   0  114 3383]]
+              precision    recall  f1-score   support
+
+      NORMAL       0.92      0.88      0.90      1334
+     WARNING       0.79      0.89      0.84      1169
+    CRITICAL       0.99      0.97      0.98      3497
+
+    accuracy                           0.93      6000
+   macro avg       0.90      0.91      0.91      6000
+weighted avg       0.94      0.93      0.93      6000
+
+
+=== random_forest | F1 macro = 0.9076
+[[1169  165    0]
+ [  96 1015   58]
+ [   0   65 3432]]
+              precision    recall  f1-score   support
+
+      NORMAL       0.92      0.88      0.90      1334
+     WARNING       0.82      0.87      0.84      1169
+    CRITICAL       0.98      0.98      0.98      3497
+
+    accuracy                           0.94      6000
+   macro avg       0.91      0.91      0.91      6000
+weighted avg       0.94      0.94      0.94      6000
+
+
+Modelo elegido: random_forest (F1 macro 0.9076)
+Guardado en models/model.joblib
