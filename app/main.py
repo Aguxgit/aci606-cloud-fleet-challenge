@@ -49,7 +49,13 @@ def load_model() -> None:
         MODEL_VERSION = bundle.get("version", "v1")
     else:
         MODEL = bundle
-        MODEL_FEATURES = [f for f in FIELDS if f not in ("robot_id", "timestamp")]
+        MODEL_FEATURES = ["speed", "battery", "motor_temp", "vibration",
+                          "motor_current", "obstacle_distance"]
+    # Una fila por solicitud: un solo hilo evita el costo de lanzar hilos
+    try:
+        MODEL.set_params(clf__n_jobs=1)
+    except ValueError:
+        pass  # el modelo no tiene ese parámetro (p. ej. regresión logística)
 
 
 @asynccontextmanager
