@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ACI606 Cloud Fleet Dashboard</title>
+  <style>
+    :root {
+      font-family: Inter, system-ui, sans-serif; color-scheme: dark;
+      --bg:#0d1117; --panel:#161b22; --line:#30363d; --text:#e6edf3; --muted:#8b949e;
+      --blue:#58a6ff; --ok:#3fb950; --warn:#d29922; --crit:#f85149;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); }
+    header { padding:20px 28px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+    h1 { margin:0; font-size:22px; }
+    h2 { margin:0 0 12px; font-size:15px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+    .tag { color:var(--muted); font-size:13px; }
+    main { padding:24px 28px 40px; display:grid; gap:24px; }
+    .panel { border:1px solid var(--line); border-radius:14px; padding:18px; background:var(--panel); }
+
+    .pill { display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:99px; border:1px solid var(--line); font-size:13px; font-weight:600; }
+    .dot { width:9px; height:9px; border-radius:50%; background:var(--muted); }
+    .pill.ok .dot { background:var(--ok); } .pill.ok { color:var(--ok); }
+    .pill.warn .dot { background:var(--warn); } .pill.warn { color:var(--warn); }
+    .pill.bad .dot { background:var(--crit); } .pill.bad { color:var(--crit); }
+
+    .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+    .tile { border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--bg); }
+    .tile .v { font-size:24px; font-weight:700; margin-top:4px; }
+    .tile .l { font-size:12px; color:var(--muted); }
+
+    .dist { display:flex; height:14px; border-radius:99px; overflow:hidden; background:var(--line); margin:10px 0 8px; }
+    .dist span { display:block; height:100%; transition:width .4s; }
+    .legend { display:flex; gap:18px; flex-wrap:wrap; font-size:13px; color:var(--muted); }
+    .sw { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; }
+    .c-NORMAL { background:var(--ok); } .c-WARNING { background:var(--warn); } .c-CRITICAL { background:var(--crit); } .c-NONE { background:var(--muted); }
+
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+    .card { border:1px solid var(--line); border-radius:14px; padding:18px; background:var(--panel); }
+    .card.CRITICAL { border-color:var(--crit); } .card.WARNING { border-color:var(--warn); }
+    .head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .robot { font-size:20px; font-weight:700; }
+    .badge { font-size:12px; font-weight:700; padding:4px 10px; border-radius:99px; color:#0d1117; }
+    .conf { font-size:12px; color:var(--muted); margin-bottom:8px; }
+    .row { display:flex; justify-content:space-between; padding:5px 0; color:#c9d1d9; font-size:14px; }
+    .bar { height:8px; background:var(--line); border-radius:99px; overflow:hidden; margin:2px 0 8px; }
+    .fill { height:100%; background:var(--blue); transition:width .4s; }
+    .spark { width:100%; height:44px; display:block; margin-top:8px; }
+    .spark-label { font-size:11px; color:var(--muted); margin-top:2px; }
+    .empty { padding:40px; text-align:center; color:var(--muted); border:1px dashed var(--line); border-radius:14px; }
+    footer { color:var(--muted); font-size:12px; text-align:center; padding-bottom:24px; }
+  </style>
+</head>
+<body>
+<header>
+  <div><h1>Cloud Fleet Dashboard</h1><div class="tag">ACI606 · Ejercicio 4 · flota virtual en la nube</div></div>
+  <div id="apiPill" class="pill"><span class="dot"></span><span id="apiText">conectando...</span></div>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>Estado del servicio</h2>
+    <div class="tiles" id="serviceTiles"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Indicador agregado de la flota</h2>
+    <div class="tiles" id="fleetTiles"></div>
+    <div class="dist" id="dist"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section>
+    <h2>Robots conectados</h2>
+    <div id="cards" class="cards"></div>
+  </section>
+</main>
+<footer id="foot">Actualización automática cada 3 s</footer>
+
+<script>
+const REFRESH_MS = 3000;
+const HISTORY_EVERY = 5;      // el histórico se refresca cada 5 ciclos
+const HISTORY_POINTS = 40;    // últimos puntos que se grafican
+const COLORS = { NORMAL: 'var(--ok)', WARNING: 'var(--warn)', CRITICAL: 'var(--crit)' };
+const PRED_FIELDS = ['robot_id','timestamp','x','y','speed','battery','motor_temp','vibration','motor_current','obstacle_distance'];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = (v, d = 1) => Number.isFinite(Number(v)) ? Number(v).toFixed(d) : '—';
+
+const predictions = {};   // robot_id -> {predicted_status, confidence}
+const histories = {};     // robot_id -> [battery,...]
+let cycle = 0;
+
+async function getJson(url, opts) {
+  const res = await fetch(url, opts);
+  if (!res.ok) throw new Error(url + ' -> ' + res.status);
+  return res.json();
+}
+
+function fmtUptime(s) {
+  s = Math.floor(Number(s) || 0);
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  return h ? `${h} h ${m} min` : m ? `${m} min ${s % 60} s` : `${s} s`;
+}
+
+function tile(label, value) {
+  return `<div class="tile"><div class="l">${esc(label)}</div><div class="v">${esc(value)}</div></div>`;
+}
+
+function setApiStatus(health, metrics, reachable) {
+  const pill = $('apiPill');
+  pill.className = 'pill ' + (!reachable ? 'bad' : health && health.status === 'ok' ? 'ok' : 'warn');
+  $('apiText').textContent = !reachable ? 'API no disponible'
+    : health && health.status === 'ok' ? 'API operativa' : 'API degradada';
+
+  const tiles = [];
+  tiles.push(tile('Base de datos', health ? (health.database === 'ok' ? 'conectada' : 'con error') : '—'));
+  tiles.push(tile('Modelo ML', health ? (health.model_loaded ? 'cargado' : 'no cargado') : '—'));
+  if (metrics) {
+    tiles.push(tile('Uptime', fmtUptime(metrics.uptime_seconds)));
+    tiles.push(tile('Telemetrías recibidas', metrics.telemetry_requests));
+    tiles.push(tile('Predicciones', metrics.predict_requests));
+    tiles.push(tile('Latencia media predicción', num(metrics.avg_predict_latency_ms, 1) + ' ms'));
+    tiles.push(tile('Errores 4xx / 5xx', `${metrics.errors_4xx} / ${metrics.errors_5xx}`));
+    tiles.push(tile('Versión del modelo', metrics.model_version));
+  }
+  $('serviceTiles').innerHTML = tiles.join('');
+}
+
+function sparkline(values) {
+  if (!values || values.length < 2) return '<div class="spark-label">Histórico: aún sin datos suficientes</div>';
+  const w = 200, h = 44, pad = 3;
+  const min = Math.min(...values), max = Math.max(...values);
+  const span = max - min || 1;
+  const pts = values.map((v, i) => {
+    const x = pad + (i * (w - 2 * pad)) / (values.length - 1);
+    const y = h - pad - ((v - min) / span) * (h - 2 * pad);
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  }).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Histórico de batería">
+      <polyline fill="none" stroke="var(--blue)" stroke-width="2" points="${pts}"/></svg>
+    <div class="spark-label">Batería, últimas ${values.length} lecturas (${num(min)}% – ${num(max)}%)</div>`;
+}
+
+function card(r) {
+  const p = predictions[r.robot_id];
+  const status = p ? p.predicted_status : null;
+  const battery = Math.max(0, Math.min(100, Number(r.battery) || 0));
+  const badge = status
+    ? `<span class="badge" style="background:${COLORS[status] || 'var(--muted)'}">${esc(status)}</span>`
+    : `<span class="badge c-NONE">SIN PREDICCIÓN</span>`;
+  const conf = p ? `Confianza ${num(p.confidence * 100, 0)} %` : 'Esperando predicción del modelo...';
+  return `<div class="card ${esc(status || '')}">
+    <div class="head"><div class="robot">${esc(r.robot_id)}</div>${badge}</div>
+    <div class="conf">${conf}</div>
+    <div class="row"><span>Batería</span><span>${num(battery)} %</span></div>
+    <div class="bar"><div class="fill" style="width:${battery}%"></div></div>
+    <div class="row"><span>Velocidad</span><span>${num(r.speed, 2)}</span></div>
+    <div class="row"><span>Temp. motor</span><span>${num(r.motor_temp)} °C</span></div>
+    <div class="row"><span>Vibración</span><span>${num(r.vibration, 2)}</span></div>
+    <div class="row"><span>Corriente motor</span><span>${num(r.motor_current, 2)}</span></div>
+    <div class="row"><span>Obstáculo</span><span>${num(r.obstacle_distance, 2)} m</span></div>
+    ${sparkline(histories[r.robot_id])}
+  </div>`;
+}
+
+function renderFleet(robots) {
+  const counts = { NORMAL: 0, WARNING: 0, CRITICAL: 0 };
+  let predicted = 0;
+  robots.forEach(r => {
+    const p = predictions[r.robot_id];
+    if (p && counts[p.predicted_status] !== undefined) { counts[p.predicted_status]++; predicted++; }
+  });
+  const avgBattery = robots.length ? robots.reduce((a, r) => a + (Number(r.battery) || 0), 0) / robots.length : null;
+  const lowBattery = robots.filter(r => Number(r.battery) < 20).length;
+
+  $('fleetTiles').innerHTML = [
+    tile('Robots conectados', robots.length),
+    tile('Batería media', avgBattery === null ? '—' : num(avgBattery) + ' %'),
+    tile('Batería baja (<20 %)', lowBattery),
+    tile('En estado crítico', counts.CRITICAL),
+  ].join('');
+
+  const total = predicted || 1;
+  $('dist').innerHTML = ['NORMAL', 'WARNING', 'CRITICAL']
+    .map(k => `<span class="c-${k}" style="width:${(counts[k] / total) * 100}%"></span>`).join('');
+  $('legend').innerHTML = ['NORMAL', 'WARNING', 'CRITICAL']
+    .map(k => `<span><i class="sw c-${k}"></i>${k}: ${counts[k]}</span>`).join('');
+}
+
+async function predictFor(r) {
+  const body = {};
+  PRED_FIELDS.forEach(f => body[f] = r[f]);
+  try {
+    predictions[r.robot_id] = await getJson('/predict', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+  } catch (e) { /* se conserva la última predicción conocida */ }
+}
+
+async function loadHistory(r) {
+  try {
+    const rows = await getJson('/robots/' + encodeURIComponent(r.robot_id) + '/history');
+    histories[r.robot_id] = rows.slice(-HISTORY_POINTS).map(x => Number(x.battery));
+  } catch (e) { /* se conserva el último histórico */ }
+}
+
+async function refresh() {
+  let robots = [], health = null, metrics = null, reachable = true;
+  try { health = await getJson('/health'); } catch (e) { reachable = false; }
+  try { metrics = await getJson('/metrics'); } catch (e) { /* sin métricas */ }
+  try { robots = await getJson('/robots'); } catch (e) { reachable = false; }
+
+  setApiStatus(health, metrics, reachable);
+  if (!reachable) { $('foot').textContent = 'No se pudo contactar la API. Reintentando...'; return; }
+
+  await Promise.all(robots.map(predictFor));
+  if (cycle % HISTORY_EVERY === 0) await Promise.all(robots.map(loadHistory));
+  cycle++;
+
+  renderFleet(robots);
+  $('cards').innerHTML = robots.length
+    ? robots.map(card).join('')
+    : '<div class="empty">Ejecuta el simulador para comenzar a recibir robots.</div>';
+  $('foot').textContent = 'Última actualización: ' + new Date().toLocaleTimeString() + ' · cada ' + REFRESH_MS / 1000 + ' s';
+}
+
+refresh();
+setInterval(refresh, REFRESH_MS);
+</script>
+</body>
+</html>
