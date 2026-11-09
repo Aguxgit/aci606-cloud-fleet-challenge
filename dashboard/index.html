@@ -14,65 +14,77 @@
     body { margin:0; background:var(--bg); color:var(--text); }
     header { padding:20px 28px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
     h1 { margin:0; font-size:22px; }
-    h2 { margin:0 0 12px; font-size:15px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+    h2 { margin:0; font-size:17px; }
     .tag { color:var(--muted); font-size:13px; }
     main { padding:24px 28px 40px; display:grid; gap:24px; }
-    .panel { border:1px solid var(--line); border-radius:14px; padding:18px; background:var(--panel); }
 
-    .pill { display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:99px; border:1px solid var(--line); font-size:13px; font-weight:600; }
+    .pills { display:flex; gap:8px; flex-wrap:wrap; }
+    .pill { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:99px; border:1px solid var(--line); background:var(--panel); font-size:13px; }
     .dot { width:9px; height:9px; border-radius:50%; background:var(--muted); }
-    .pill.ok .dot { background:var(--ok); } .pill.ok { color:var(--ok); }
-    .pill.warn .dot { background:var(--warn); } .pill.warn { color:var(--warn); }
-    .pill.bad .dot { background:var(--crit); } .pill.bad { color:var(--crit); }
+    .pill.ok .dot { background:var(--ok); } .pill.warn .dot { background:var(--warn); } .pill.bad .dot { background:var(--crit); }
+    .pill.bad { color:var(--crit); }
 
-    .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
-    .tile { border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--bg); }
-    .tile .v { font-size:24px; font-weight:700; margin-top:4px; }
-    .tile .l { font-size:12px; color:var(--muted); }
+    .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+    .kpi { border:1px solid var(--line); border-radius:14px; padding:16px 18px; background:var(--panel); min-height:116px; }
+    .kpi .l { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+    .kpi .v { font-size:28px; font-weight:700; margin-top:6px; }
+    .kpi .v small { font-size:16px; color:var(--muted); font-weight:600; }
+    .kpi .s { font-size:12px; color:var(--muted); margin-top:6px; }
 
-    .dist { display:flex; height:14px; border-radius:99px; overflow:hidden; background:var(--line); margin:10px 0 8px; }
+    .dist { display:flex; height:10px; border-radius:99px; overflow:hidden; background:var(--line); margin:14px 0 8px; }
     .dist span { display:block; height:100%; transition:width .4s; }
-    .legend { display:flex; gap:18px; flex-wrap:wrap; font-size:13px; color:var(--muted); }
-    .sw { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; }
+    .legend { display:flex; gap:12px; flex-wrap:wrap; font-size:12px; color:var(--muted); }
+    .sw { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
     .c-NORMAL { background:var(--ok); } .c-WARNING { background:var(--warn); } .c-CRITICAL { background:var(--crit); } .c-NONE { background:var(--muted); }
 
-    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
-    .card { border:1px solid var(--line); border-radius:14px; padding:18px; background:var(--panel); }
-    .card.CRITICAL { border-color:var(--crit); } .card.WARNING { border-color:var(--warn); }
-    .head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .sechead { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+    .sechead label { font-size:13px; color:var(--muted); }
+    select { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:13px; margin-left:6px; }
+
+    .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:16px; }
+    .card { border:1px solid var(--line); border-left:4px solid var(--muted); border-radius:14px; padding:18px; background:var(--panel); }
+    .card.NORMAL { border-left-color:var(--ok); } .card.WARNING { border-left-color:var(--warn); } .card.CRITICAL { border-left-color:var(--crit); }
+    .card.stale { opacity:.6; border-left-color:var(--muted); }
+    .head { display:flex; justify-content:space-between; align-items:center; }
     .robot { font-size:20px; font-weight:700; }
-    .badge { font-size:12px; font-weight:700; padding:4px 10px; border-radius:99px; color:#0d1117; }
-    .conf { font-size:12px; color:var(--muted); margin-bottom:8px; }
+    .badge { font-size:11px; font-weight:700; padding:4px 11px; border-radius:99px; letter-spacing:.03em; }
+    .badge.NORMAL { background:rgba(63,185,80,.2); color:var(--ok); }
+    .badge.WARNING { background:rgba(210,153,34,.2); color:var(--warn); }
+    .badge.CRITICAL { background:rgba(248,81,73,.2); color:var(--crit); }
+    .badge.NONE { background:rgba(139,148,158,.2); color:var(--muted); }
+    .conf { font-size:12px; color:var(--muted); margin:6px 0 12px; }
     .row { display:flex; justify-content:space-between; padding:5px 0; color:#c9d1d9; font-size:14px; }
-    .bar { height:8px; background:var(--line); border-radius:99px; overflow:hidden; margin:2px 0 8px; }
+    .row .k { color:#c9d1d9; } .row .t { color:var(--muted); }
+    .bar { height:7px; background:var(--line); border-radius:99px; overflow:hidden; margin:2px 0 10px; }
     .fill { height:100%; background:var(--blue); transition:width .4s; }
-    .spark { width:100%; height:44px; display:block; margin-top:8px; }
-    .spark-label { font-size:11px; color:var(--muted); margin-top:2px; }
+    .chart { border-top:1px solid var(--line); margin-top:10px; padding-top:10px; }
+    .spark { width:100%; height:48px; display:block; }
+    .chart-label { font-size:11px; color:var(--muted); margin-bottom:4px; }
+    .chart-foot { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:2px; }
     .empty { padding:40px; text-align:center; color:var(--muted); border:1px dashed var(--line); border-radius:14px; }
     footer { color:var(--muted); font-size:12px; text-align:center; padding-bottom:24px; }
   </style>
 </head>
 <body>
 <header>
-  <div><h1>Cloud Fleet Dashboard</h1><div class="tag">ACI606 · Ejercicio 4 · flota virtual en la nube</div></div>
-  <div id="apiPill" class="pill"><span class="dot"></span><span id="apiText">conectando...</span></div>
+  <div><h1>Cloud Fleet Dashboard</h1><div class="tag">ACI606 · Ejercicio 4</div></div>
+  <div class="pills">
+    <div id="apiPill" class="pill"><span class="dot"></span><span id="apiText">conectando...</span></div>
+    <div class="pill" id="modelPill">modelo: —</div>
+    <div class="pill" id="upPill">uptime: —</div>
+  </div>
 </header>
 
 <main>
-  <section class="panel">
-    <h2>Estado del servicio</h2>
-    <div class="tiles" id="serviceTiles"></div>
-  </section>
-
-  <section class="panel">
-    <h2>Indicador agregado de la flota</h2>
-    <div class="tiles" id="fleetTiles"></div>
-    <div class="dist" id="dist"></div>
-    <div class="legend" id="legend"></div>
-  </section>
+  <section class="kpis" id="kpis"></section>
 
   <section>
-    <h2>Robots conectados</h2>
+    <div class="sechead">
+      <h2>Robots</h2>
+      <label>Gráfico histórico:
+        <select id="metricSel"></select>
+      </label>
+    </div>
     <div id="cards" class="cards"></div>
   </section>
 </main>
@@ -80,17 +92,30 @@
 
 <script>
 const REFRESH_MS = 3000;
-const HISTORY_EVERY = 5;      // el histórico se refresca cada 5 ciclos
-const HISTORY_POINTS = 40;    // últimos puntos que se grafican
-const COLORS = { NORMAL: 'var(--ok)', WARNING: 'var(--warn)', CRITICAL: 'var(--crit)' };
+const RESYNC_EVERY = 30;       // ciclos entre recargas completas del historial (~90 s)
+const POINTS = 60;             // puntos que se grafican por robot
+const STALE_S = 30;            // segundos sin muestras para marcar "sin señal reciente"
 const PRED_FIELDS = ['robot_id','timestamp','x','y','speed','battery','motor_temp','vibration','motor_current','obstacle_distance'];
+const METRICS = {
+  vibration:     { label: 'Vibración',        unit: '',    d: 2 },
+  battery:       { label: 'Batería',          unit: ' %',  d: 1 },
+  motor_temp:    { label: 'Temp. motor',      unit: ' °C', d: 1 },
+  motor_current: { label: 'Corriente',        unit: ' A',  d: 2 },
+  speed:         { label: 'Velocidad',        unit: '',    d: 2 },
+};
+const STATUS_COLOR = { NORMAL: 'var(--ok)', WARNING: 'var(--warn)', CRITICAL: 'var(--crit)' };
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num = (v, d = 1) => Number.isFinite(Number(v)) ? Number(v).toFixed(d) : '—';
+const isEpoch = t => Number(t) > 1e9 && Number(t) < 4e9;
 
 const predictions = {};   // robot_id -> {predicted_status, confidence}
-const histories = {};     // robot_id -> [battery,...]
+const series = {};        // robot_id -> [{ts, battery, speed, motor_temp, vibration, motor_current}]
+const records = {};       // robot_id -> filas almacenadas en la base de datos
+const clientMs = [];      // latencias de /predict medidas desde este navegador
+let state = { robots: [], health: null, metrics: null, reachable: true };
+let selectedMetric = 'vibration';
 let cycle = 0;
 
 async function getJson(url, opts) {
@@ -104,107 +129,55 @@ function fmtUptime(s) {
   const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
   return h ? `${h} h ${m} min` : m ? `${m} min ${s % 60} s` : `${s} s`;
 }
-
-function tile(label, value) {
-  return `<div class="tile"><div class="l">${esc(label)}</div><div class="v">${esc(value)}</div></div>`;
+function pct(arr, p) {
+  if (!arr.length) return null;
+  const a = [...arr].sort((x, y) => x - y);
+  return a[Math.min(a.length - 1, Math.floor((p / 100) * a.length))];
+}
+function pick(r) {
+  return { ts: Number(r.timestamp), battery: Number(r.battery), speed: Number(r.speed),
+           motor_temp: Number(r.motor_temp), vibration: Number(r.vibration), motor_current: Number(r.motor_current) };
 }
 
-function setApiStatus(health, metrics, reachable) {
-  const pill = $('apiPill');
-  pill.className = 'pill ' + (!reachable ? 'bad' : health && health.status === 'ok' ? 'ok' : 'warn');
-  $('apiText').textContent = !reachable ? 'API no disponible'
-    : health && health.status === 'ok' ? 'API operativa' : 'API degradada';
+/* ---------- datos ---------- */
+async function loadHistory(id) {
+  try {
+    const rows = await getJson('/robots/' + encodeURIComponent(id) + '/history');
+    records[id] = rows.length;
+    series[id] = rows.slice(-POINTS).map(pick);
+  } catch (e) { /* se conserva lo último conocido */ }
+}
 
-  const tiles = [];
-  tiles.push(tile('Base de datos', health ? (health.database === 'ok' ? 'conectada' : 'con error') : '—'));
-  tiles.push(tile('Modelo ML', health ? (health.model_loaded ? 'cargado' : 'no cargado') : '—'));
-  if (metrics) {
-    tiles.push(tile('Uptime', fmtUptime(metrics.uptime_seconds)));
-    tiles.push(tile('Telemetrías recibidas', metrics.telemetry_requests));
-    tiles.push(tile('Predicciones', metrics.predict_requests));
-    tiles.push(tile('Latencia media predicción', num(metrics.avg_predict_latency_ms, 1) + ' ms'));
-    tiles.push(tile('Errores 4xx / 5xx', `${metrics.errors_4xx} / ${metrics.errors_5xx}`));
-    tiles.push(tile('Versión del modelo', metrics.model_version));
+function appendLive(r) {
+  const s = series[r.robot_id];
+  if (!s) return;
+  const p = pick(r);
+  if (!s.length || p.ts > s[s.length - 1].ts) {
+    s.push(p); if (s.length > POINTS) s.shift();
+    records[r.robot_id] = (records[r.robot_id] || 0) + 1;
   }
-  $('serviceTiles').innerHTML = tiles.join('');
-}
-
-function sparkline(values) {
-  if (!values || values.length < 2) return '<div class="spark-label">Histórico: aún sin datos suficientes</div>';
-  const w = 200, h = 44, pad = 3;
-  const min = Math.min(...values), max = Math.max(...values);
-  const span = max - min || 1;
-  const pts = values.map((v, i) => {
-    const x = pad + (i * (w - 2 * pad)) / (values.length - 1);
-    const y = h - pad - ((v - min) / span) * (h - 2 * pad);
-    return x.toFixed(1) + ',' + y.toFixed(1);
-  }).join(' ');
-  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Histórico de batería">
-      <polyline fill="none" stroke="var(--blue)" stroke-width="2" points="${pts}"/></svg>
-    <div class="spark-label">Batería, últimas ${values.length} lecturas (${num(min)}% – ${num(max)}%)</div>`;
-}
-
-function card(r) {
-  const p = predictions[r.robot_id];
-  const status = p ? p.predicted_status : null;
-  const battery = Math.max(0, Math.min(100, Number(r.battery) || 0));
-  const badge = status
-    ? `<span class="badge" style="background:${COLORS[status] || 'var(--muted)'}">${esc(status)}</span>`
-    : `<span class="badge c-NONE">SIN PREDICCIÓN</span>`;
-  const conf = p ? `Confianza ${num(p.confidence * 100, 0)} %` : 'Esperando predicción del modelo...';
-  return `<div class="card ${esc(status || '')}">
-    <div class="head"><div class="robot">${esc(r.robot_id)}</div>${badge}</div>
-    <div class="conf">${conf}</div>
-    <div class="row"><span>Batería</span><span>${num(battery)} %</span></div>
-    <div class="bar"><div class="fill" style="width:${battery}%"></div></div>
-    <div class="row"><span>Velocidad</span><span>${num(r.speed, 2)}</span></div>
-    <div class="row"><span>Temp. motor</span><span>${num(r.motor_temp)} °C</span></div>
-    <div class="row"><span>Vibración</span><span>${num(r.vibration, 2)}</span></div>
-    <div class="row"><span>Corriente motor</span><span>${num(r.motor_current, 2)}</span></div>
-    <div class="row"><span>Obstáculo</span><span>${num(r.obstacle_distance, 2)} m</span></div>
-    ${sparkline(histories[r.robot_id])}
-  </div>`;
-}
-
-function renderFleet(robots) {
-  const counts = { NORMAL: 0, WARNING: 0, CRITICAL: 0 };
-  let predicted = 0;
-  robots.forEach(r => {
-    const p = predictions[r.robot_id];
-    if (p && counts[p.predicted_status] !== undefined) { counts[p.predicted_status]++; predicted++; }
-  });
-  const avgBattery = robots.length ? robots.reduce((a, r) => a + (Number(r.battery) || 0), 0) / robots.length : null;
-  const lowBattery = robots.filter(r => Number(r.battery) < 20).length;
-
-  $('fleetTiles').innerHTML = [
-    tile('Robots conectados', robots.length),
-    tile('Batería media', avgBattery === null ? '—' : num(avgBattery) + ' %'),
-    tile('Batería baja (<20 %)', lowBattery),
-    tile('En estado crítico', counts.CRITICAL),
-  ].join('');
-
-  const total = predicted || 1;
-  $('dist').innerHTML = ['NORMAL', 'WARNING', 'CRITICAL']
-    .map(k => `<span class="c-${k}" style="width:${(counts[k] / total) * 100}%"></span>`).join('');
-  $('legend').innerHTML = ['NORMAL', 'WARNING', 'CRITICAL']
-    .map(k => `<span><i class="sw c-${k}"></i>${k}: ${counts[k]}</span>`).join('');
 }
 
 async function predictFor(r) {
   const body = {};
   PRED_FIELDS.forEach(f => body[f] = r[f]);
+  const t0 = performance.now();
   try {
     predictions[r.robot_id] = await getJson('/predict', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
     });
+    clientMs.push(performance.now() - t0);
+    if (clientMs.length > 100) clientMs.shift();
   } catch (e) { /* se conserva la última predicción conocida */ }
 }
 
-async function loadHistory(r) {
-  try {
-    const rows = await getJson('/robots/' + encodeURIComponent(r.robot_id) + '/history');
-    histories[r.robot_id] = rows.slice(-HISTORY_POINTS).map(x => Number(x.battery));
-  } catch (e) { /* se conserva el último histórico */ }
+function staleSet(robots) {
+  const out = new Set();
+  const maxTs = Math.max(0, ...robots.map(r => Number(r.timestamp) || 0));
+  const now = Date.now() / 1000;
+  const ref = isEpoch(maxTs) && Math.abs(now - maxTs) < 86400 ? now : maxTs;
+  robots.forEach(r => { if (ref - Number(r.timestamp) > STALE_S) out.add(r.robot_id); });
+  return out;
 }
 
 async function refresh() {
@@ -212,20 +185,115 @@ async function refresh() {
   try { health = await getJson('/health'); } catch (e) { reachable = false; }
   try { metrics = await getJson('/metrics'); } catch (e) { /* sin métricas */ }
   try { robots = await getJson('/robots'); } catch (e) { reachable = false; }
+  state = { robots, health, metrics, reachable };
 
-  setApiStatus(health, metrics, reachable);
-  if (!reachable) { $('foot').textContent = 'No se pudo contactar la API. Reintentando...'; return; }
-
-  await Promise.all(robots.map(predictFor));
-  if (cycle % HISTORY_EVERY === 0) await Promise.all(robots.map(loadHistory));
-  cycle++;
-
-  renderFleet(robots);
-  $('cards').innerHTML = robots.length
-    ? robots.map(card).join('')
-    : '<div class="empty">Ejecuta el simulador para comenzar a recibir robots.</div>';
-  $('foot').textContent = 'Última actualización: ' + new Date().toLocaleTimeString() + ' · cada ' + REFRESH_MS / 1000 + ' s';
+  if (reachable) {
+    const resync = cycle % RESYNC_EVERY === 0;
+    const need = robots.filter(r => resync || !series[r.robot_id]);
+    await Promise.all(need.map(r => loadHistory(r.robot_id)));
+    robots.forEach(r => { if (!need.includes(r)) appendLive(r); });
+    const stale = staleSet(robots);
+    await Promise.all(robots.filter(r => !stale.has(r.robot_id) || !predictions[r.robot_id]).map(predictFor));
+    cycle++;
+  }
+  render();
 }
+
+/* ---------- vista ---------- */
+function kpi(label, value, sub, extra = '') {
+  return `<div class="kpi"><div class="l">${esc(label)}</div><div class="v">${value}</div>${extra}<div class="s">${sub}</div></div>`;
+}
+
+function renderHeader() {
+  const { health, metrics, reachable } = state;
+  const pill = $('apiPill');
+  const ok = reachable && health && health.status === 'ok';
+  pill.className = 'pill ' + (!reachable ? 'bad' : ok ? 'ok' : 'warn');
+  $('apiText').textContent = !reachable ? 'API no disponible' : ok ? 'API operativa' : 'API degradada';
+  $('modelPill').textContent = 'modelo: ' + (metrics ? metrics.model_version : '—') + (health && !health.model_loaded ? ' (no cargado)' : '');
+  $('upPill').textContent = 'uptime: ' + (metrics ? fmtUptime(metrics.uptime_seconds) : '—');
+}
+
+function renderKpis(stale) {
+  const { robots, metrics, health } = state;
+  const total = robots.length, active = total - [...stale].filter(id => robots.some(r => r.robot_id === id)).length;
+  const counts = { NORMAL: 0, WARNING: 0, CRITICAL: 0 }; let predicted = 0;
+  robots.forEach(r => { const p = predictions[r.robot_id]; if (p && counts[p.predicted_status] !== undefined) { counts[p.predicted_status]++; predicted++; } });
+  const den = predicted || 1;
+  const bar = `<div class="dist">${['NORMAL','WARNING','CRITICAL'].map(k => `<span class="c-${k}" style="width:${counts[k] / den * 100}%"></span>`).join('')}</div>
+    <div class="legend">${['NORMAL','WARNING','CRITICAL'].map(k => `<span><i class="sw c-${k}"></i>${k} ${counts[k]}</span>`).join('')}</div>`;
+
+  const totalRecords = Object.values(records).reduce((a, b) => a + b, 0);
+  const p50 = pct(clientMs, 50), p95 = pct(clientMs, 95);
+  const avg = metrics ? Number(metrics.avg_predict_latency_ms) : null;
+  const avgTxt = avg ? `${num(avg, 1)} <small>ms</small>` : '—';
+  const cli = p50 === null ? 'aún sin solicitudes a /predict' : `desde este navegador: p50 ${num(p50, 0)} ms · p95 ${num(p95, 0)} ms`;
+
+  $('kpis').innerHTML = [
+    kpi('Robots conectados', `${active} <small>/ ${total}</small>`, 'activos respecto al total registrado'),
+    kpi('Estado actual de la flota', '', '', bar).replace('<div class="v"></div>', '').replace('<div class="s"></div>', ''),
+    kpi('Registros almacenados', totalRecords.toLocaleString('es-CL'), `PostgreSQL · ${total} robots históricos`),
+    kpi('Predicciones realizadas', metrics ? Number(metrics.predict_requests).toLocaleString('es-CL') : '—', 'desde el último arranque del servicio'),
+    kpi('Latencia /predict', avgTxt, cli),
+    kpi('Solicitudes / errores', metrics ? Number(metrics.http_requests).toLocaleString('es-CL') : '—',
+        metrics ? `errores 4xx: ${metrics.errors_4xx} · 5xx: ${metrics.errors_5xx}` : '—'),
+  ].join('');
+}
+
+function sparkline(id, status) {
+  const s = series[id] || [];
+  const m = METRICS[selectedMetric];
+  if (s.length < 2) return `<div class="chart"><div class="chart-label">${m.label} · aún sin datos suficientes</div></div>`;
+  const vals = s.map(x => x[selectedMetric]);
+  const min = Math.min(...vals), max = Math.max(...vals), span = max - min || 1;
+  const w = 200, h = 48, pad = 3;
+  const pts = vals.map((v, i) => `${(pad + i * (w - 2 * pad) / (vals.length - 1)).toFixed(1)},${(h - pad - ((v - min) / span) * (h - 2 * pad)).toFixed(1)}`).join(' ');
+  const color = STATUS_COLOR[status] || 'var(--blue)';
+  return `<div class="chart"><div class="chart-label">${m.label} · últimas ${vals.length}</div>
+    <svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Histórico de ${esc(m.label)}">
+      <polyline fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke" points="${pts}"/></svg>
+    <div class="chart-foot"><span>mín ${num(min, m.d)}</span><span>máx ${num(max, m.d)}</span></div></div>`;
+}
+
+function card(r, stale) {
+  const id = r.robot_id, p = predictions[id];
+  const status = p ? p.predicted_status : null;
+  const isStale = stale.has(id);
+  const battery = Math.max(0, Math.min(100, Number(r.battery) || 0));
+  const when = isEpoch(r.timestamp) ? new Date(Number(r.timestamp) * 1000).toLocaleTimeString() : '—';
+  const conf = p ? `confianza ${num(p.confidence * 100, 0)} %` : 'esperando predicción...';
+  return `<div class="card ${esc(status || '')} ${isStale ? 'stale' : ''}">
+    <div class="head"><div class="robot">${esc(id)}</div><span class="badge ${esc(status || 'NONE')}">${esc(status || 'SIN PREDICCIÓN')}</span></div>
+    <div class="conf">${conf}${isStale ? ' · sin señal reciente' : ''}</div>
+    <div class="row"><span class="k">Batería</span><span>${num(battery)} %</span></div>
+    <div class="bar"><div class="fill" style="width:${battery}%"></div></div>
+    <div class="row"><span class="k">Velocidad</span><span>${num(r.speed, 2)}</span></div>
+    <div class="row"><span class="k">Temp. motor</span><span>${num(r.motor_temp)} °C</span></div>
+    <div class="row"><span class="k">Vibración</span><span>${num(r.vibration, 2)}</span></div>
+    <div class="row"><span class="k">Corriente</span><span>${num(r.motor_current, 2)} A</span></div>
+    <div class="row"><span class="k">Obstáculo</span><span>${num(r.obstacle_distance, 2)} m</span></div>
+    <div class="row"><span class="t">Última muestra</span><span class="t">${esc(when)}</span></div>
+    ${sparkline(id, status)}
+  </div>`;
+}
+
+function render() {
+  renderHeader();
+  const stale = staleSet(state.robots);
+  renderKpis(stale);
+  $('cards').innerHTML = state.reachable
+    ? (state.robots.length ? state.robots.map(r => card(r, stale)).join('')
+       : '<div class="empty">Ejecuta el simulador para comenzar a recibir robots.</div>')
+    : '<div class="empty">No se pudo contactar la API. Reintentando...</div>';
+  $('foot').textContent = state.reachable
+    ? 'Última actualización: ' + new Date().toLocaleTimeString() + ' · cada ' + REFRESH_MS / 1000 + ' s'
+    : 'No se pudo contactar la API. Reintentando...';
+}
+
+const sel = $('metricSel');
+sel.innerHTML = Object.entries(METRICS).map(([k, m]) => `<option value="${k}">${m.label}</option>`).join('');
+sel.value = selectedMetric;
+sel.addEventListener('change', () => { selectedMetric = sel.value; render(); });
 
 refresh();
 setInterval(refresh, REFRESH_MS);
