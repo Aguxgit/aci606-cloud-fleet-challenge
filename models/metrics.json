@@ -3,7 +3,7 @@
   "f1_macro": {
     "baseline_mayoritaria": 0.2843,
     "logreg": 0.9313,
-    "random_forest": 0.9395
+    "random_forest": 0.937
   },
   "split": "fleet_id"
 }

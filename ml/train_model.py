@@ -16,7 +16,7 @@ FEATURES = ["speed", "battery", "motor_temp", "vibration",
             "motor_current", "obstacle_distance"]
 TARGET = "status"
 LABELS = ["NORMAL", "WARNING", "CRITICAL"]
-VERSION = "v1"
+VERSION = "v2"
 
 
 def load_data() -> tuple[pd.DataFrame, str]:
@@ -56,7 +56,7 @@ def main() -> None:
                             ("clf", LogisticRegression(max_iter=2000,
                                                        class_weight="balanced"))]),
         "random_forest": Pipeline([("clf", RandomForestClassifier(
-            n_estimators=300, class_weight="balanced",
+            n_estimators=100, class_weight="balanced",
             random_state=42, n_jobs=-1))]),
     }
 
